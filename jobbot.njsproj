@@ -12,7 +12,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d25b26d5-27bd-44f3-ad47-c22ed847a9dd</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>src\jobbot.js</StartupFile>
+    <StartupFile>server.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -30,6 +30,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="server.js" />
     <Compile Include="src\dialogs\index.js" />
     <Compile Include="src\jobbot.js" />
     <Compile Include="src\jobsearchlogic.js" />
