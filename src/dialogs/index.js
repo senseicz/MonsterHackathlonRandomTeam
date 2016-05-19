@@ -106,12 +106,14 @@ function showJobDetail(session, sr, isFirst, offerNext) {
     var company = sr.Items[0].CompanyName;
     var title = sr.Items[0].Title;
     var where = sr.Items[0].City;
+    var jobId = sr.Items[0].Id;
     
     if (isFirst) {
         session.send('The best one that matches your criteria is:');
     }
 
     session.send(company + ' is looking for ' + title + ' in ' + where + '. Please find job details below.');
+    session.userData.JobId = jobId;
 
     if (offerNext) {
         session.send('Feel free to ask for next job if you do not like this one.');
