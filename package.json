@@ -2,9 +2,10 @@
   "name": "jobbot",
   "version": "0.0.1",
   "description": "Monster's inteligent bot PoC",
+  "main": "server.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/senseicz/MonsterHackathlonRandomTeam"
+    "url": "git+https://github.com/senseicz/MonsterHackathlonRandomTeam"
   },
   "keywords": [
     "chat",
