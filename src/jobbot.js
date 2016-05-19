@@ -18,3 +18,9 @@ server.post('/api/messages', bot.verifyBotFramework(), bot.listen());
 server.listen(3978, function () {
     console.log('%s listening to %s', server.name, server.url);
 });
+
+// Serve a static web page
+server.get(/.*/, restify.serveStatic({
+    'directory': '.',
+    'default': 'index.html'
+}));

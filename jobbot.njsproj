@@ -35,6 +35,7 @@
     <Compile Include="src\jobsearchlogic.js" />
     <Compile Include="src\prompts.js" />
     <Content Include=".gitignore" />
+    <Content Include="index.html" />
     <Content Include="LICENSE" />
     <Content Include="package.json" />
     <Content Include="README.md" />
