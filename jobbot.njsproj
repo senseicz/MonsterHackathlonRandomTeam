@@ -32,7 +32,6 @@
   <ItemGroup>
     <Compile Include="server.js" />
     <Compile Include="src\dialogs\index.js" />
-    <Compile Include="src\jobbot.js" />
     <Compile Include="src\jobsearchlogic.js" />
     <Compile Include="src\prompts.js" />
     <Content Include=".gitignore" />

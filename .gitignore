@@ -34,3 +34,4 @@ node_modules
 /.vs/jobbot/v14/.suo
 /.ntvs_analysis.dat
 /.vs/config/applicationhost.config
+/obj/Debug
