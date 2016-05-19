@@ -9,8 +9,8 @@ var index = require('./src/dialogs/index');
 
 // Get secrets from server environment
 var botConnectorOptions = {
-    appId: process.env.BOTID, 
-    appSecret: process.env.BOTSECRET
+    appId: 'MonsterJobSearchBot', // process.env.BOTID, 
+    appSecret: 'xxa' //process.env.BOTSECRET
 };
 
 // Create bot and add dialogs
@@ -37,6 +37,7 @@ server.get(/.*/, restify.serveStatic({
     'default': 'index.html'
 }));
 
-server.listen(3978, function () {
+server.listen(process.env.port ||3978, function () {
     console.log('%s listening to %s', server.name, server.url);
 });
+
