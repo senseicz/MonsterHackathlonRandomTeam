@@ -34,6 +34,7 @@
     <Compile Include="src\dialogs\index.js" />
     <Compile Include="src\jobsearchlogic.js" />
     <Compile Include="src\prompts.js" />
+    <Compile Include="test.js" />
     <Content Include=".gitignore" />
     <Content Include="index.html" />
     <Content Include="LICENSE" />

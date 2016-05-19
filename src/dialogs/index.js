@@ -8,6 +8,11 @@ var dialog = new builder.LuisDialog(model);
 module.exports = dialog;
 
 
+var pTitle, pWhere, pKeywords, pCompanyName, pDuration;
+var page = 1;
+var totalResults = 0;
+var currentlyDisplayedJobId = 0;
+
 /*INTENTS:
  * 
 -Introduction
@@ -24,22 +29,29 @@ dialog.on('None', builder.DialogAction.send("Sorry, I didn't get that."));
 /** Answer users help requests. We can use a DialogAction to send a static message. */
 dialog.on('Help', builder.DialogAction.send(prompts.helpMessage));
 
-dialog.on('Introduction', [
+dialog.on('Introduction',
+    builder.DialogAction.send('Nice to meet you, I\'m Monster Job Search Bot, at your service.'));
 
-]);
 
 /** Prompts a user for the job title and do the search  */
 dialog.on('FindJobs', [
     function (session, args, next) {
-
-        var pTitle, pWhere, pKeywords, pCompanyName, pDuration;
+        
+        //reset values
+        page = 1;
+        pTitle = "";
+        pWhere = "";
+        pKeywords = "";
+        pCompanyName = "";
+        pDuration = "";
+        currentlyDisplayedJobId = 0;
 
         // See if got the tasks jobtitle from our LUIS model.
         var title = builder.EntityRecognizer.findEntity(args.entities, 'Title');
         var where = builder.EntityRecognizer.findEntity(args.entities, 'builtin.geography.city');
         var keywords = builder.EntityRecognizer.findEntity(args.entities, 'Category');
         var companyName = builder.EntityRecognizer.findEntity(args.entities, 'Company');
-        var duration = builder.EntityRecognizer.findEntity(args.entities, 'builtin.');
+        var duration = builder.EntityRecognizer.findEntity(args.entities, 'builtin.datetime.time');
 
         if (!title) {
             // Prompt user to enter title.
@@ -70,7 +82,7 @@ dialog.on('FindJobs', [
         if (!duration) {
             pDuration = -1;
         } else {
-            pDuration = duration.entity;
+            pDuration = 7; //duration.entity;
         }
 
         // Pass title to next step.
@@ -85,7 +97,7 @@ dialog.on('FindJobs', [
     function (session, results) {
         
         search.doSearch(results.title, results.where, results.companyName,
-             results.duration, results.keywords,
+             results.duration, results.keywords, page, 
              function (sr) {
             
             if (sr.RecordsFound == 0) {
@@ -93,9 +105,11 @@ dialog.on('FindJobs', [
             } else if (sr.RecordsFound == 1) {
                 session.send('There is only one job that matches your criteria.');
                 showJobDetail(session, sr, false, false);
+                totalResults = 1;
 
             } else {
                 session.send('We have ' + sr.RecordsFound + ' jobs in our database.');
+                totalResults = sr.RecordsFound;
                 showJobDetail(session, sr, false, true);
             }
         });
@@ -114,6 +128,7 @@ function showJobDetail(session, sr, isFirst, offerNext) {
 
     session.send(company + ' is looking for ' + title + ' in ' + where + '. Please find job details below.');
     session.userData.JobId = jobId;
+    currentlyDisplayedJobId = jobId;
 
     if (offerNext) {
         session.send('Feel free to ask for next job if you do not like this one.');
@@ -123,46 +138,97 @@ function showJobDetail(session, sr, isFirst, offerNext) {
 /** Finds out the user's intent is to find an employee */
 dialog.on('Employer', [
     function (session, args, next) {
-        // Do we have any tasks?
-        if (session.userData.tasks && session.userData.tasks.length > 0) {
-            // See if got the tasks title from our LUIS model.
-            var topTask;
-            var title = builder.EntityRecognizer.findEntity(args.entities, 'TaskTitle');
-            if (title) {
-                // Find it in our list of tasks
-                topTask = builder.EntityRecognizer.findBestMatch(session.userData.tasks, title.entity);
-            }
+        
+        var reqTitle = builder.EntityRecognizer.findEntity(args.entities, 'Title');
+        var reqWhere = builder.EntityRecognizer.findEntity(args.entities, 'builtin.geography.city');
+        //var reqKeywords = builder.EntityRecognizer.findEntity(args.entities, 'Category');
+
+        var respMessage = 'Seems like you are looking to hire ';
+        
+        if (reqTitle) {
+            respMessage += 'a ' + reqTitle.entity;
+        } else {
+            respMessage += 'someone';
+        }
+        
+        if (reqWhere) {
+            respMessage += ' in ' + reqWhere.entity;
+        }
+
+        respMessage += '. Please take a look at http://hiring.monster.com how we can help you.';
+        
+        session.send(respMessage);
+        
+        //// Do we have any tasks?
+        //if (session.userData.tasks && session.userData.tasks.length > 0) {
+        //    // See if got the tasks title from our LUIS model.
+        //    var topTask;
+        //    var title = builder.EntityRecognizer.findEntity(args.entities, 'TaskTitle');
+        //    if (title) {
+        //        // Find it in our list of tasks
+        //        topTask = builder.EntityRecognizer.findBestMatch(session.userData.tasks, title.entity);
+        //    }
             
-            // Prompt user if task missing or not found
-            if (!topTask) {
-                builder.Prompts.choice(session, prompts.finishTaskMissing, session.userData.tasks);
-            } else {
-                next({ response: topTask });
-            }
-        } else {
-            session.send(prompts.listNoTasks);
-        }
-    },
-    function (session, results) {
-        if (results && results.response) {
-            session.userData.tasks.splice(results.response.index, 1);
-            session.send(prompts.finishTaskDone, { task: results.response.entity });
-        } else {
-            session.send(prompts.canceled);
-        }
+        //    // Prompt user if task missing or not found
+        //    if (!topTask) {
+        //        builder.Prompts.choice(session, prompts.finishTaskMissing, session.userData.tasks);
+        //    } else {
+        //        next({ response: topTask });
+        //    }
+        //} else {
+        //    session.send(prompts.listNoTasks);
+        //}
     }
+    //,
+    //function (session, results) {
+    //    if (results && results.response) {
+    //        session.userData.tasks.splice(results.response.index, 1);
+    //        session.send(prompts.finishTaskDone, { task: results.response.entity });
+    //    } else {
+    //        session.send(prompts.canceled);
+    //    }
+    //}
 ]);
 
 /** Shows the user a concrete job. */
 dialog.on('JobView', function (session) {
-    if (session.userData.tasks && session.userData.tasks.length > 0) {
-        var list = '';
-        session.userData.tasks.forEach(function (value, index) {
-            list += session.gettext(prompts.listTaskItem, { index: index + 1, task: value });
-        });
-        session.send(prompts.listTaskList, list);
+
+    page = page + 1;
+
+    if (page <= totalResults) {
+        search.doSearch(pTitle, pWhere, pCompanyName, pDuration, pKeywords, page,
+            function(sr) {
+
+                if (sr.RecordsFound == 0) {
+                    session.send('Sorry, there are no more jobs like this in our database.');
+                } else if (sr.RecordsFound == 1) {
+                    session.send('There is only one job that matches your criteria.');
+                    showJobDetail(session, sr, false, false);
+                    totalResults = 1;
+                } else {
+                    totalResults = sr.RecordsFound;
+                    showJobDetail(session, sr, false, true);
+                }
+            });
+    } else {
+        session.send('There are no more jobs like this.');
     }
-    else {
-        session.send(prompts.listNoTasks);
-    }
+
+
+    //if (session.userData.tasks && session.userData.tasks.length > 0) {
+    //    var list = '';
+    //    session.userData.tasks.forEach(function (value, index) {
+    //        list += session.gettext(prompts.listTaskItem, { index: index + 1, task: value });
+    //    });
+    //    session.send(prompts.listTaskList, list);
+    //}
+    //else {
+    //    session.send(prompts.listNoTasks);
+    //}
+});
+
+dialog.on('More', function(session) {
+    var jobDetails = search.getJobBody(currentlyDisplayedJobId, function(jobBody) {
+        session.send(jobBody);
+    });
 });

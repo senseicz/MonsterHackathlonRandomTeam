@@ -3,19 +3,7 @@
 module.exports = {
  
 
-    getNumberOfJobs: function getNumberOfJobs(jobtitle, where, companyName, duration, keywords) {
-        this.doSearch(jobtitle, where, companyName, duration, keywords, function(sr) {
-            if (sr) {
-                return sr.RecordsFound;
-            }
-            
-            return 0;
-        });
-        
-    },
-
-
-    doSearch: function doSearch(jobtitle, where, companyName, duration, keywords, cb) {
+    doSearch: function doSearch(jobtitle, where, companyName, duration, keywords, page, cb) {
 
         if (!jobtitle) {
             jobtitle = "";
@@ -35,6 +23,10 @@ module.exports = {
         
         if (!keywords) {
             keywords = "";
+        }
+        
+        if (!page) {
+            page = 1;
         }
 
         var client = restify.createJsonClient({
@@ -59,8 +51,8 @@ module.exports = {
             "Keywords": keywords,
             "Latitude": 0,
             "Longitude": 0,
-            "Page": 1,
-            "PageSize": 5,
+            "Page": page,
+            "PageSize": 1,
             "Radius": 20,
             "Sort": "dt.rv.di",
             "SortId": 0,
@@ -73,5 +65,24 @@ module.exports = {
                     cb(obj.Data);
                 }
         });
+    },
+
+    getJobBody : function getJobBody(jobId, cb) {
+        var client = restify.createJsonClient({
+            url: 'https://gateway.monster.com',
+            headers: { 'x-domain': 'mobileservice.monster.com' },
+        });
+        
+        client.get('/seeker/mobile/jobs/' + jobId + '/body?stripHtml=true&ver=2', function (err, req, res, obj) {
+            var body = obj.Data.Body;
+            var i, str = '';
+            for (i = 0; i < body.length; i++) {
+                str += '%' + ('0' + body[i].toString(16)).slice(-2);
+            }
+            str = decodeURIComponent(str);
+            cb(str);
+        });
     }
+
+
 };
