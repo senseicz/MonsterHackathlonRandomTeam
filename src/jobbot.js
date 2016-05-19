@@ -7,8 +7,14 @@ var restify = require('restify');
 var builder = require('botbuilder');
 var index = require('./dialogs/index');
 
+// Get secrets from server environment
+var botConnectorOptions = {
+    appId: process.env.BOTID, 
+    appSecret: process.env.BOTSECRET
+};
+
 // Create bot and add dialogs
-var bot = new builder.BotConnectorBot({ appId: 'YourAppId', appSecret: 'YourAppSecret' });
+var bot = new builder.BotConnectorBot(botConnectorOptions);
 bot.add('/', index);
 
 
