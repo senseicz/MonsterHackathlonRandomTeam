@@ -21,7 +21,7 @@ bot.add('/', index);
 // Setup Restify Server
 var server = restify.createServer();
 
-app.use(
+server.use(
     restify.CORS({
         origins: [
             '*'
@@ -48,7 +48,7 @@ app.use(
 );
 
 // Handle all OPTIONS requests to a deadend (Allows CORS to work them out)
-app.opts(/.*/, function(req, res) { res.send(204) });
+server.opts(/.*/, function(req, res) { res.send(204) });
 
 server.post('/api/messages', bot.verifyBotFramework(), bot.listen());
 
