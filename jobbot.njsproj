@@ -30,16 +30,27 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="bundle.js" />
     <Compile Include="server.js" />
     <Compile Include="src\dialogs\index.js" />
     <Compile Include="src\jobsearchlogic.js" />
     <Compile Include="src\prompts.js" />
     <Compile Include="test.js" />
     <Content Include=".gitignore" />
+    <Content Include="448c34a56d699c29117adc64c43affeb.woff2" />
+    <Content Include="4759440a7c561ebafd24b6c8249a6306.png" />
+    <Content Include="89889688147bd7575d6327160d64e760.svg" />
+    <Content Include="bot.jpg" />
+    <Content Include="e18bbf611f2a2e43afc071aa2f4e1512.ttf" />
+    <Content Include="example.json" />
+    <Content Include="f4769f9bdb7466be65088239c12046d1.eot" />
+    <Content Include="fa2772327f55d8198301fdb8bcfc8158.woff" />
     <Content Include="index.html" />
     <Content Include="LICENSE" />
+    <Content Include="monster.png" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="user.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

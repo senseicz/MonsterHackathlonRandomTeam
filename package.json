@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "botbuilder": "^0.10.2",
-    "restify": "^4.0.4"
+    "restify": "^4.0.4",
+    "restify-cors-middleware": "0.0.6"
   }
 }
