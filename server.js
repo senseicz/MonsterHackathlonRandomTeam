@@ -21,9 +21,36 @@ bot.add('/', index);
 // Setup Restify Server
 var server = restify.createServer();
 
-server.use(
-    restify.CORS()
+app.use(
+    restify.CORS({
+        origins: [
+            'http://development.example.com',
+            'https://staging.example.com',
+            'https://www.example.com',
+        ],
+        headers: [
+            "authorization",
+            "withcredentials",
+            "x-requested-with",
+            "x-forwarded-for",
+            "x-real-ip",
+            "x-customheader",
+            "user-agent",
+            "keep-alive",
+            "host",
+            "accept",
+            "connection",
+            "upgrade",
+            "content-type",
+            "dnt",
+            "if-modified-since",
+            "cache-control"
+        ]
+    })
 );
+
+// Handle all OPTIONS requests to a deadend (Allows CORS to work them out)
+app.opts(/.*/, function(req, res) { res.send(204) });
 
 server.post('/api/messages', bot.verifyBotFramework(), bot.listen());
 
