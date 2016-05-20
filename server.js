@@ -24,9 +24,7 @@ var server = restify.createServer();
 app.use(
     restify.CORS({
         origins: [
-            'http://development.example.com',
-            'https://staging.example.com',
-            'https://www.example.com',
+            '*'
         ],
         headers: [
             "authorization",
